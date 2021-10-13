@@ -147,6 +147,7 @@ class Elevator {
     requestFloor(_floor) {
         this.floorRequestList.push(_floor)
         this.move()
+        this.operateDoors()
     }
 
     move() {   
@@ -175,6 +176,24 @@ class Elevator {
             this.floorRequestList.sort(function (a, b) { return a - b });
         } else {
             this.floorRequestList.sort(function (a, b) { return b - a });
+        }
+    }
+    operateDoors() {
+        this.doorStatus = 'opened'
+        //WAIT 5 SECONDS//
+        if (!this.overweight) {
+            this.door.status = 'closing'
+            if (!this.door.obstruction) {
+                this.door.status = 'closed'
+            } else {
+                this.door.obstruction = false
+                this.operateDoors()
+            }
+        } else {
+            while (this.overweight) {
+                this.overweight = false
+            }
+            this.operateDoors()
         }
     } 
 }
