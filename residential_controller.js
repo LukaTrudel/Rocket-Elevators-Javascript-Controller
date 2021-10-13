@@ -52,7 +52,7 @@ class Column {
     }
 
     requestElevator(_floor, _direction) {
-        console.log("||-PASSENGER CALLS THE ELEVATOR AT FLOOR " + _floor + " TO GO " + _direction + "-||");
+        console.log("-CLIENT CALLS THE ELEVATOR AT FLOOR " + _floor + " TO GO " + _direction + "-");
         let elevator = this.findElevator(_floor, _direction)
         elevator.floorRequestList.push(_floor)
         elevator.sortFloorList()
@@ -71,23 +71,19 @@ class Column {
         }
 
         this.elevatorList.forEach(elevator => {
-            //The elevator is at my floor and going in the direction I want//
+            
             if (requestedFloor == elevator.currentFloor && elevator.status == 'stopped' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(1, elevator, bestElevatorInformations, requestedFloor)
             }
-            //The elevator is lower than me, is coming up and I want to go up//
             else if (requestedFloor > elevator.currentFloor && elevator.direction == 'up' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
             }
-            //The elevator is higher than me, is coming down and I want to go down//
             else if (requestedFloor < elevator.currentFloor && elevator.direction == 'down' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
             }
-            //The elevator is idle//
             else if (elevator.status == 'idle') {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(3, elevator, bestElevatorInformations, requestedFloor)
             }
-            //The elevator is not available, but still could take the call nothing else better is found//
             else {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(4, elevator, bestElevatorInformations, requestedFloor)
             }
@@ -96,7 +92,7 @@ class Column {
             let referenceGap = bestElevatorInformations.referenceGap
         });
         console.log();
-        console.log(">>[ELEVATOR TO BE SENT]:");
+        console.log(">>[ELEVATOR SENT]:");
         console.log(bestElevatorInformations.bestElevator);
         return bestElevatorInformations.bestElevator
     }
