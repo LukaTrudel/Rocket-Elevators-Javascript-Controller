@@ -59,7 +59,7 @@ class Column {
         console.log()
         console.log("ELEVATOR " + elevator.ID + " MOVING FROM FLOOR " + elevator.currentFloor + " TO FLOOR " + _floor)
         elevator.move()
-        //elevator.operateDoors()
+        elevator.operateDoors()
         return elevator
     };
 
