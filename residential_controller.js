@@ -1,6 +1,6 @@
-// let elevatorID = 1
-// let floorRequestButtonID = 1
-// let callButtonID = 1
+let elevatorID = 1
+let floorRequestButtonID = 1
+let callButtonID = 1
 
 console.log("GO_HABS_GO")
 
@@ -8,11 +8,11 @@ console.log("GO_HABS_GO")
 class Column {
     constructor(_id, _amountOfFloors, _amountOfElevators) {
         this.ID = _id
-        this.status = _status
+        this.status = columnStatus.ACTIVE
         this.amountOfFloors = _amountOfFloors
         this.amountOfElevators = _amountOfElevators
         this.elevatorList = []
-        this.callButtonsList = []
+        this.callButtonList = []
 
         this.createElevators(_amountOfFloors, _amountOfElevators)
         this.createCallButtons(_amountOfFloors)
@@ -24,24 +24,31 @@ class Column {
     };
 
     createCallButtons(_amountOfFloors) {
-        for(let i = 0; i < _amountOfFloors; i++) {
-            if (i < _amountOfFloors) {
-                let callButton = new CallButton(i++, i++, 'up')
-                this.callButtonsList.push(callButton)   
+        let buttonFloor = 1
+
+        for (let i = 0; i < _amountOfFloors; i++) {
+            if (buttonFloor < _amountOfFloors) {
+                let callButton = new CallButton(callButtonID, 'off', buttonFloor, 'up')
+                this.callButtonList.push(callButton)
+                callButtonID++
             }
-            if (i > 1) {
-                let callButton = new CallButton(i++, i++, 'down')
-                this.callButtonsList.push(callButton)
+
+            if (buttonFloor >= 2) {
+                let callButton = new CallButton(callButtonID, 'off', buttonFloor, 'down')
+                this.callButtonList.push(callButton)
+                callButtonID++
             }
+            buttonFloor++
         }
+    
     }
 
     createElevators(_amountOfFloors, _amountOfElevators) {
-        for(let i = 0; i < _amountOfElevators; i++) {
-            let elevator = new Elevator(i++, _amountOfFloors)
+        for (let i = 0; i < _amountOfElevators; i++) {
+            let elevator = new Elevator(elevatorID, _amountOfFloors)
             this.elevatorList.push(elevator)
+            elevatorID++
         }
-
     }
 
     requestElevator(_floor, _direction) {
@@ -52,7 +59,7 @@ class Column {
         console.log()
         console.log("ELEVATOR " + elevator.ID + " MOVING FROM FLOOR " + elevator.currentFloor + " TO FLOOR " + _floor)
         elevator.move()
-        elevator.operateDoors()
+        //elevator.operateDoors()
         return elevator
     };
 
@@ -63,7 +70,7 @@ class Column {
             referenceGap: 10000000
         }
 
-        this.elevatorsList.forEach(elevator => {
+        this.elevatorList.forEach(elevator => {
             //The elevator is at my floor and going in the direction I want//
             if (requestedFloor == elevator.currentFloor && elevator.status == 'stopped' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(1, elevator, bestElevatorInformations, requestedFloor)
@@ -114,9 +121,9 @@ class Column {
 class Elevator {
     constructor(_id, _amountOfFloors) {
         this.ID = _id
-        this.status = _status
+        this.status = elevatorStatus.IDLE
         this.amountOfFloors = _amountOfFloors
-        this.currentFloor = _currentFloor
+        this.currentFloor = 1
         this.direction;
         this.door = new Door(_id)
         this.floorRequestButtonList = []
@@ -128,9 +135,12 @@ class Elevator {
 
 
     createFloorRequestButtons(_amountOfFloors) {
+        let buttonFloor = 1
         for(let i = 0; i < _amountOfFloors; i++){
-            let floorRequesButton = new FloorRequestButton(i++, i++)
+            let floorRequesButton = new FloorRequestButton(floorRequestButtonID, 'off', buttonFloor)
             this.floorRequestButtonList.push(floorRequesButton)
+            buttonFloor++
+            floorRequestButtonID++
         }
     }
 
@@ -159,7 +169,14 @@ class Elevator {
             this.floorRequestList.shift()
         }
         this.status = 'idle'
-    }   
+    }  
+    sortFloorList() {
+        if (this.direction == 'up') {
+            this.floorRequestList.sort(function (a, b) { return a - b });
+        } else {
+            this.floorRequestList.sort(function (a, b) { return b - a });
+        }
+    } 
 }
 
 class CallButton {
