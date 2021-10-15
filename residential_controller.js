@@ -2,13 +2,13 @@ let elevatorID = 1
 let floorRequestButtonID = 1
 let callButtonID = 1
 
-console.log("GO_HABS_GO")
+
 
 
 class Column {
     constructor(_id, _amountOfFloors, _amountOfElevators) {
         this.ID = _id
-        this.status = columnStatus.ACTIVE
+        this.status = columnStatus.ONLINE
         this.amountOfFloors = _amountOfFloors
         this.amountOfElevators = _amountOfElevators
         this.elevatorList = []
@@ -51,6 +51,7 @@ class Column {
         }
     }
 
+    //Simulate when a user press a button outside the elevator//
     requestElevator(_floor, _direction) {
         console.log("-CLIENT CALLS THE ELEVATOR AT FLOOR " + _floor + " TO GO " + _direction + "-");
         let elevator = this.findElevator(_floor, _direction)
@@ -63,6 +64,9 @@ class Column {
         return elevator
     };
 
+    //score system
+    //first elevator is always default bestElevator before being compared
+    //if 2 elevators get the same score, the closest one is chosen
     findElevator(requestedFloor, requestedDirection) {
         let bestElevatorInformations = {
             bestElevator: null,
@@ -71,19 +75,23 @@ class Column {
         }
 
         this.elevatorList.forEach(elevator => {
-            
+            // elevator is at the same floor and going in the direction that I want
             if (requestedFloor == elevator.currentFloor && elevator.status == 'stopped' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(1, elevator, bestElevatorInformations, requestedFloor)
             }
+            //lower than me and going up 
             else if (requestedFloor > elevator.currentFloor && elevator.direction == 'up' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
             }
+            //higher than me and going down
             else if (requestedFloor < elevator.currentFloor && elevator.direction == 'down' && requestedDirection == elevator.direction) {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(2, elevator, bestElevatorInformations, requestedFloor)
             }
+            //idle
             else if (elevator.status == 'idle') {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(3, elevator, bestElevatorInformations, requestedFloor)
             }
+            //busy elevator but will come if theres no other elevator found
             else {
                 bestElevatorInformations = this.checkIfElevatorIsBetter(4, elevator, bestElevatorInformations, requestedFloor)
             }
@@ -91,9 +99,6 @@ class Column {
             let bestScore = bestElevatorInformations.bestScore
             let referenceGap = bestElevatorInformations.referenceGap
         });
-        console.log();
-        console.log(">>[ELEVATOR SENT]:");
-        console.log(bestElevatorInformations.bestElevator);
         return bestElevatorInformations.bestElevator
     }
 
@@ -140,6 +145,7 @@ class Elevator {
         }
     }
 
+    //simulates when a button is pressed inside the elevator
     requestFloor(_floor) {
         this.floorRequestList.push(_floor)
         this.move()
@@ -224,8 +230,8 @@ class Door {
 
 
 const columnStatus = {
-    ACTIVE: 'active',
-    INACTIVE: 'inactive'
+    ONLINE: 'online',
+    OFFLINE: 'offline'
 };
 
 
@@ -248,16 +254,11 @@ const buttonStatus = {
 };
 
 
-const sensorStatus = {
-    ON: 'on',
-    OFF: 'off'
-};
-
-
 const doorStatus = {
     OPENED: 'opened',
     CLOSED: 'closed'
 };
+
 //----------------------SCENARIO 1---------------------//
 
 //Elevator 1 is Idle at floor 2
@@ -369,7 +370,6 @@ function scenario3() {
     console.log()
 }
 
-//TO SIMULATE A SCENARIO IN THE TERMINAL, SIMPLY UNCOMMENT (REMOVE THE "//") THE DESIRED FUNCTION
 
 // scenario1()
 // scenario2()
