@@ -258,5 +258,120 @@ const doorStatus = {
     OPENED: 'opened',
     CLOSED: 'closed'
 };
+//----------------------SCENARIO 1---------------------//
 
+//Elevator 1 is Idle at floor 2
+//Elevator 2 is Idle at floor 6
+//Someone is on floor 3 and wants to go to the 7th floor.
+//Elevator 1 is expected to be sent.
+
+
+function scenario1() {
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+    console.log("--------------------SCENARIO #1--------------------")
+    console.log()
+    console.log("-----[REQUEST #1]-----")
+    console.log()
+    let column = new Column(1, 10, 2)
+    column.elevatorList[0].currentFloor = 2
+    column.elevatorList[1].currentFloor = 6
+    console.log()
+    let elevator = column.requestElevator(3, 'up')
+    elevator.requestFloor(7)
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+}
+
+
+
+//----------------------SCENARIO 2---------------------//
+
+//Elevator 1 is Idle at floor 10
+//Elevator 2 is idle at floor 3
+//Someone is on the 1st floor and requests the 6th floor.
+//Elevator 2 should be sent.
+//2 minutes later, someone else is on the 3rd floor and requests the 5th floor. Elevator 2 should be sent.
+//Finally, a third person is at floor 9 and wants to go down to the 2nd floor.
+//Elevator 1 should be sent.
+
+
+function scenario2() {
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+    console.log("--------------------SCENARIO #2--------------------")
+    let column = new Column(1, 10, 2)
+    column.elevatorList[0].currentFloor = 10
+    column.elevatorList[1].currentFloor = 3
+    console.log()
+    console.log("-----[REQUEST #1]-----")
+    console.log()
+    let elevator = column.requestElevator(1, 'up')
+    elevator.requestFloor(6)
+    console.log()
+    console.log()
+    console.log("-----[REQUEST #2]-----")
+    console.log()
+    console.log()
+    column.elevatorList[1].currentFloor = 6
+    elevator = column.requestElevator(3, 'up')
+    elevator.requestFloor(5)
+    console.log()
+    console.log()
+    console.log("-----[REQUEST #3]-----")
+    console.log()
+    console.log()
+    elevator = column.requestElevator(9, 'down')
+    elevator.requestFloor(2)
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+}
+
+
+
+
+// //----------------------SCENARIO 3---------------------//
+
+// //Elevator A is Idle at floor 10
+// //Elevator B is Moving from floor 3 to floor 6
+// //Someone is on floor 3 and requests the 2nd floor.
+// //Elevator A should be sent.
+// //5 minutes later, someone else is on the 10th floor and wants to go to the 3rd. Elevator B should be sent.
+
+
+function scenario3() {
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+    console.log("--------------------SCENARIO #3--------------------")
+    let column = new Column(1, 10, 2)
+    column.elevatorList[0].currentFloor = 10
+    column.elevatorList[1].currentFloor = 3
+    column.elevatorList[1].status = 'moving'
+    console.log()
+    console.log("-----[REQUEST #1]-----")
+    console.log()
+    let elevator = column.requestElevator(3, 'down')
+    elevator.requestFloor(2)
+    console.log()
+    console.log("-----[REQUEST #2]-----")
+    console.log()
+    column.elevatorList[1].currentFloor = 6
+    column.elevatorList[1].status = 'idle'
+    elevator = column.requestElevator(10, 'down')
+    elevator.requestFloor(3)
+    console.log()
+    console.log("______________________________________________________________________________________________")
+    console.log()
+}
+
+//TO SIMULATE A SCENARIO IN THE TERMINAL, SIMPLY UNCOMMENT (REMOVE THE "//") THE DESIRED FUNCTION
+
+// scenario1()
+// scenario2()
+// scenario3()
 module.exports = { Column, Elevator, CallButton, FloorRequestButton, Door }
